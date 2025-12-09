@@ -9,23 +9,23 @@ const AchievementSection = () => {
   const achievements = [
     {
       id: 1,
-      target: 4000,
-      suffix: '',
-      description: 'The automated process starts as soon as your clothes go into the machine.',
+      target: 5000,
+      suffix: '+',
+      description: 'Happy customers trust our professional laundry and dry cleaning services.',
       color: '#1393c4'
     },
     {
       id: 2,
-      target: 300,
+      target: 500,
       suffix: '+',
-      description: 'The automated process starts as soon as your clothes go into the machine.',
+      description: 'Garments cleaned daily with eco-friendly detergents and modern equipment.',
       color: '#1393c4'
     },
     {
       id: 3,
-      target: 95,
+      target: 99,
       suffix: '%',
-      description: 'The automated process starts as soon as your clothes go into the machine.',
+      description: 'Customer satisfaction rate with same-day pickup and delivery service.',
       color: '#1393c4'
     }
   ];
@@ -116,10 +116,10 @@ const AchievementSection = () => {
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
         }`}>
           <span className="inline-block px-6 py-2 bg-blue-50 text-[#1393c4] rounded-full text-sm font-medium mb-4 shadow-md">
-            Fun Fact
+            Our Track Record
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1393c4]">
-            Company achievement
+            Trusted Laundry Service Excellence
           </h2>
         </div>
 
