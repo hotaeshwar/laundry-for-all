@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tag, Package, Zap, Gift, Calculator, MapPin, Check, Sparkles, ArrowLeft, X } from 'lucide-react';
 
 const PricingOffers = ({ onClose, onBookingClick }) => {
@@ -9,8 +9,6 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
     drycleaning: 0
   });
   const [animatePrice, setAnimatePrice] = useState(false);
-  const [visibleSections, setVisibleSections] = useState([]);
-  const sectionRefs = useRef([]);
 
   const cities = [
     { id: 'jaipur', name: 'Jaipur', discount: '20%' },
@@ -49,33 +47,6 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
     return total * (1 - discountPercent);
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      sectionRefs.current.forEach((ref, index) => {
-        if (ref) {
-          const rect = ref.getBoundingClientRect();
-          const isVisible = rect.top < window.innerHeight * 0.85;
-          
-          if (isVisible && !visibleSections.includes(index)) {
-            setTimeout(() => {
-              setVisibleSections(prev => [...prev, index]);
-            }, index * 100);
-          }
-        }
-      });
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [visibleSections]);
-
-  const addToRefs = (el) => {
-    if (el && !sectionRefs.current.includes(el)) {
-      sectionRefs.current.push(el);
-    }
-  };
-
   const primaryColor = '#1393c4';
 
   return (
@@ -93,6 +64,40 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
           0% { transform: scale(1) rotateX(0deg); opacity: 1; }
           50% { transform: scale(1.1) rotateX(180deg); opacity: 0; }
           100% { transform: scale(1) rotateX(360deg); opacity: 1; }
+        }
+        
+        /* CSS-Only Scroll Animations */
+        @keyframes slideInFromBottom {
+          from {
+            opacity: 0;
+            transform: translateY(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideInFromLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes slideInFromRight {
+          from {
+            opacity: 0;
+            transform: translateX(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
         }
         
         .glow-card {
@@ -124,44 +129,44 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         }
         .shine-effect:hover::before { left: 100%; }
         
-        .fade-in-up {
+        /* CSS Scroll Animations */
+        .scroll-animate {
           opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in-up.visible {
-          opacity: 1;
-          transform: translateY(0);
+          animation: slideInFromBottom 0.8s ease-out forwards;
         }
         
-        .fade-in-left {
+        .scroll-animate-left {
           opacity: 0;
-          transform: translateX(-30px);
-          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in-left.visible {
-          opacity: 1;
-          transform: translateX(0);
+          animation: slideInFromLeft 0.8s ease-out forwards;
         }
         
-        .fade-in-right {
+        .scroll-animate-right {
           opacity: 0;
-          transform: translateX(30px);
-          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+          animation: slideInFromRight 0.8s ease-out forwards;
         }
-        .fade-in-right.visible {
-          opacity: 1;
-          transform: translateX(0);
+        
+        /* Animation delays using nth-child */
+        .scroll-animate:nth-child(1) { animation-delay: 0s; }
+        .scroll-animate:nth-child(2) { animation-delay: 0.1s; }
+        .scroll-animate:nth-child(3) { animation-delay: 0.2s; }
+        .scroll-animate:nth-child(4) { animation-delay: 0.3s; }
+        .scroll-animate:nth-child(5) { animation-delay: 0.4s; }
+        
+        .city-section-visible {
+          opacity: 1 !important;
+          transform: none !important;
         }
         
         /* Mobile-specific adjustments */
         @media (max-width: 640px) {
           .mobile-header-badge {
-            padding: 0.3rem 0.6rem !important;
+            padding: 0.2rem 0.4rem !important;
             font-size: 0.65rem !important;
-            line-height: 1.2;
+            line-height: 1;
             white-space: nowrap;
-            display: inline-block;
+            overflow: visible;
+            max-width: none;
+            min-width: auto;
             letter-spacing: -0.01em;
           }
           
@@ -193,9 +198,8 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         
         @media (max-width: 480px) {
           .mobile-header-badge {
-            padding: 0.25rem 0.5rem !important;
+            padding: 0.15rem 0.3rem !important;
             font-size: 0.6rem !important;
-            letter-spacing: -0.02em;
           }
           
           .mobile-price {
@@ -203,28 +207,15 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
           }
         }
         
-        @media (max-width: 400px) {
+        @media (max-width: 380px) {
           .mobile-header-badge {
-            padding: 0.2rem 0.45rem !important;
+            padding: 0.1rem 0.25rem !important;
             font-size: 0.55rem !important;
-            letter-spacing: -0.03em;
           }
           
           .header-title {
-            font-size: 0.85rem !important;
-          }
-        }
-        
-        @media (max-width: 360px) {
-          .mobile-header-badge {
-            padding: 0.15rem 0.4rem !important;
-            font-size: 0.5rem !important;
-            letter-spacing: -0.04em;
-          }
-          
-          .header-title {
-            font-size: 0.8rem !important;
-            max-width: 85px;
+            font-size: 0.9rem !important;
+            max-width: 100px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -239,8 +230,9 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
       {/* Fixed Header */}
       <header className="bg-white shadow-lg sticky top-0 z-50 border-b-4" style={{ borderColor: primaryColor }}>
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-3">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 flex-shrink min-w-0">
+          <div className="flex items-center justify-between gap-1 sm:gap-2">
+            {/* Left side: Back button + Title */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink min-w-0 flex-1">
               <button 
                 onClick={onClose} 
                 className="p-1 sm:p-1.5 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex-shrink-0"
@@ -249,12 +241,13 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
-              <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold gradient-text header-title">
+              <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold gradient-text truncate header-title flex-shrink">
                 LFA Pricing & Offers
               </h1>
             </div>
             
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Right side: Badge + Close button */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <span className="mobile-header-badge px-2 py-1 sm:px-3 sm:py-1.5 rounded-full font-bold bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg glow-card">
                 20% OFF 1st Order
               </span>
@@ -274,10 +267,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Section 1 - Hero */}
-        <section 
-          ref={addToRefs} 
-          className={`rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 mb-6 sm:mb-8 md:mb-10 glow-card bg-white fade-in-up ${visibleSections.includes(0) ? 'visible' : ''}`}
-        >
+        <section className="rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 mb-6 sm:mb-8 md:mb-10 glow-card bg-white scroll-animate">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-5">
             <div className="flex-1">
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 gradient-text">
@@ -296,11 +286,8 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
           </div>
         </section>
 
-        {/* Section 2 - City Selection */}
-        <section 
-          ref={addToRefs} 
-          className={`mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(1) ? 'visible' : ''}`}
-        >
+        {/* Section 2 - City Selection - ALWAYS VISIBLE */}
+        <section className="mb-6 sm:mb-8 md:mb-10 city-section-visible">
           <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6 glow-card mobile-section">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <MapPin className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: primaryColor }} />
@@ -312,12 +299,14 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
                   key={city.id} 
                   onClick={() => handleCityChange(city.id)}
                   className={`shine-effect relative p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 ${
-                    selectedCity === city.id ? 'shadow-xl scale-105' : 'border-gray-200 hover:shadow-lg hover:scale-102'
-                  } fade-in-up`}
+                    selectedCity === city.id ? 'shadow-xl scale-105 bg-blue-50' : 'border-gray-200 hover:shadow-lg hover:scale-102 bg-white'
+                  }`}
                   style={{
                     borderColor: selectedCity === city.id ? primaryColor : '#e5e7eb',
-                    backgroundColor: selectedCity === city.id ? '#e6f4fb' : 'white',
-                    animationDelay: `${index * 0.1}s`
+                    minHeight: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
                   }}
                 >
                   <span className="block text-sm sm:text-base font-bold mb-1 gradient-text truncate">{city.name}</span>
@@ -330,20 +319,20 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
                 </button>
               ))}
             </div>
+            <div className="mt-3 text-center">
+              <p className="text-xs text-gray-500 italic">Tap on a city to see specific rates</p>
+            </div>
           </div>
         </section>
 
         {/* Section 3 - Service Rates */}
-        <section 
-          ref={addToRefs} 
-          className={`mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(2) ? 'visible' : ''}`}
-        >
-          <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-center gradient-text mobile-heading">
+        <section className="mb-6 sm:mb-8 md:mb-10">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-center gradient-text mobile-heading scroll-animate">
             Our Service Rates for <span className="capitalize">{selectedCity}</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mobile-grid">
             {/* Laundry Service Card */}
-            <div className={`bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect fade-in-left ${visibleSections.includes(2) ? 'visible' : ''}`}>
+            <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect scroll-animate-left">
               <div className="p-4 sm:p-5" style={{ backgroundColor: primaryColor }}>
                 <Package className="w-8 h-8 sm:w-10 sm:h-10 text-white mb-2" />
                 <h4 className="text-base sm:text-lg md:text-xl font-bold text-white">Laundry Service</h4>
@@ -371,7 +360,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
             </div>
 
             {/* Ironing Service Card */}
-            <div className={`bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect fade-in-up ${visibleSections.includes(2) ? 'visible' : ''}`} style={{ animationDelay: '0.1s' }}>
+            <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect scroll-animate">
               <div className="p-4 sm:p-5" style={{ backgroundColor: primaryColor }}>
                 <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white mb-2" />
                 <h4 className="text-base sm:text-lg md:text-xl font-bold text-white">Ironing Service</h4>
@@ -399,7 +388,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
             </div>
 
             {/* Dry Cleaning Card */}
-            <div className={`bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect fade-in-right ${visibleSections.includes(2) ? 'visible' : ''}`} style={{ animationDelay: '0.2s' }}>
+            <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden glow-card shine-effect scroll-animate-right">
               <div className="p-4 sm:p-5" style={{ backgroundColor: primaryColor }}>
                 <Tag className="w-8 h-8 sm:w-10 sm:h-10 text-white mb-2" />
                 <h4 className="text-base sm:text-lg md:text-xl font-bold text-white">Dry Cleaning</h4>
@@ -429,10 +418,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         </section>
 
         {/* Section 4 - Express Service */}
-        <section 
-          ref={addToRefs} 
-          className={`mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(3) ? 'visible' : ''}`}
-        >
+        <section className="mb-6 sm:mb-8 md:mb-10 scroll-animate">
           <div className="rounded-2xl p-4 sm:p-5 md:p-6 shadow-xl glow-card bg-white mobile-section">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -451,18 +437,15 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         </section>
 
         {/* Section 5 - Price Calculator */}
-        <section 
-          ref={addToRefs} 
-          className={`mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(4) ? 'visible' : ''}`}
-        >
-          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6 glow-card mobile-section">
+        <section className="mb-6 sm:mb-8 md:mb-10">
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6 glow-card mobile-section scroll-animate">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Calculator className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: primaryColor }} />
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold gradient-text mobile-heading">Price Calculator</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
               {['laundry', 'ironing', 'drycleaning'].map((type, index) => (
-                <div key={type} className={`fade-in-up ${visibleSections.includes(4) ? 'visible' : ''}`} style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={type} className="scroll-animate">
                   <label className="block text-sm font-bold mb-2 gradient-text capitalize">{type} ({type === 'laundry' ? 'kg' : 'pieces'})</label>
                   <input 
                     type="number" 
@@ -480,7 +463,8 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
             </div>
 
             {calculateTotal() > 0 && (
-              <div className={`rounded-xl p-4 sm:p-5 border-2 glow-card bg-gradient-to-br from-blue-50 to-white fade-in-up ${visibleSections.includes(4) ? 'visible' : ''}`} style={{ borderColor: primaryColor, animationDelay: '0.3s' }}>
+              <div className="rounded-xl p-4 sm:p-5 border-2 glow-card bg-gradient-to-br from-blue-50 to-white scroll-animate"
+                   style={{ borderColor: primaryColor }}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
                   <div className="flex-1">
                     <div className="mb-1">
@@ -514,10 +498,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         </section>
 
         {/* Section 6 - Free Inclusions */}
-        <section 
-          ref={addToRefs} 
-          className={`mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(5) ? 'visible' : ''}`}
-        >
+        <section className="mb-6 sm:mb-8 md:mb-10 scroll-animate">
           <div className="rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 shadow-xl glow-card bg-white mobile-section">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Gift className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" style={{ color: primaryColor }} />
@@ -527,11 +508,8 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
               {freeInclusions.map((inclusion, index) => (
                 <div 
                   key={index}
-                  className={`shine-effect flex items-center gap-1 sm:gap-2 bg-gradient-to-br from-blue-50 to-white rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 transition-all duration-300 hover:shadow-lg hover:scale-105 fade-in-up ${visibleSections.includes(5) ? 'visible' : ''}`}
-                  style={{ 
-                    borderColor: primaryColor,
-                    animationDelay: `${index * 0.05}s`
-                  }}
+                  className="shine-effect flex items-center gap-1 sm:gap-2 bg-gradient-to-br from-blue-50 to-white rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 transition-all duration-300 hover:shadow-lg hover:scale-105 scroll-animate"
+                  style={{ borderColor: primaryColor }}
                 >
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: primaryColor }} />
                   <span className="text-xs sm:text-sm md:text-base font-semibold gradient-text mobile-text truncate">{inclusion}</span>
@@ -542,10 +520,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         </section>
 
         {/* Section 7 - Price Promise */}
-        <section 
-          ref={addToRefs} 
-          className={`bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6 lg:p-8 glow-card mb-6 sm:mb-8 md:mb-10 fade-in-up ${visibleSections.includes(6) ? 'visible' : ''}`}
-        >
+        <section className="bg-white rounded-2xl shadow-xl p-4 sm:p-5 md:p-6 lg:p-8 glow-card mb-6 sm:mb-8 md:mb-10 scroll-animate">
           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center mb-4 sm:mb-6 gradient-text mobile-heading">Our Price Promise</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             {[
@@ -555,8 +530,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
             ].map((item, index) => (
               <div 
                 key={index} 
-                className={`text-center p-3 sm:p-4 shine-effect rounded-xl hover:shadow-lg transition-all duration-300 fade-in-up ${visibleSections.includes(6) ? 'visible' : ''}`}
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="text-center p-3 sm:p-4 shine-effect rounded-xl hover:shadow-lg transition-all duration-300 scroll-animate"
               >
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 glow-card" style={{ backgroundColor: '#e6f4fb' }}>
                   <item.icon className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: primaryColor }} />
@@ -571,10 +545,7 @@ const PricingOffers = ({ onClose, onBookingClick }) => {
         </section>
 
         {/* Section 8 - CTA */}
-        <section 
-          ref={addToRefs} 
-          className={`text-center fade-in-up ${visibleSections.includes(7) ? 'visible' : ''}`}
-        >
+        <section className="text-center scroll-animate">
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-2xl glow-card">
             <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-2 sm:mb-3">Ready to Experience Premium Laundry Care?</h3>
             <p className="text-xs sm:text-sm md:text-base lg:text-lg text-blue-100 mb-4 sm:mb-6 mobile-text">Book your first order now and get 20% OFF!</p>
