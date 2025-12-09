@@ -5,23 +5,23 @@ const ProcessSection = () => {
     {
       id: 1,
       icon: '/images/services-icon1.png',
-      title: 'Collect Your Clothes',
-      description: 'The automated process starts as soon as your clothes go into the machine. The outcome is gleaming clothes!',
-      alt: 'Laundry collection service icon'
+      title: 'Free Pickup & Collection',
+      description: 'Schedule a convenient pickup time and our team collects your laundry from your doorstep with contactless service.',
+      alt: 'Free laundry pickup and collection service'
     },
     {
       id: 2,
       icon: '/images/services-icon2.png',
-      title: 'Wash Your Clothes',
-      description: 'The automated process starts as soon as your clothes go into the machine. The outcome is gleaming clothes!',
-      alt: 'Professional washing service icon'
+      title: 'Professional Cleaning',
+      description: 'Expert washing with premium detergents and state-of-the-art machines ensuring spotless, fresh-smelling garments.',
+      alt: 'Professional washing and dry cleaning service'
     },
     {
       id: 3,
       icon: '/images/services-icon3.png',
-      title: 'Get Delivery',
-      description: 'The automated process starts as soon as your clothes go into the machine. The outcome is gleaming clothes!',
-      alt: 'Fast delivery service icon'
+      title: 'Same-Day Delivery',
+      description: 'Your clean, folded clothes are delivered back to you the same day, neatly packaged and ready to wear.',
+      alt: 'Fast same-day laundry delivery service'
     }
   ];
 
@@ -88,7 +88,7 @@ const ProcessSection = () => {
             Our Process
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1393c4] transition-all duration-300 opacity-0 translate-y-4">
-            THIS IS HOW WE WORK
+            HOW OUR LAUNDRY SERVICE WORKS
           </h2>
         </div>
 
