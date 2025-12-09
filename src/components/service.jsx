@@ -9,11 +9,13 @@ import {
   Home,
   Package,
   Tag,
-  Filter
+  Filter,
+  X
 } from 'lucide-react';
 
 export default function Services() {
   const [visibleSections, setVisibleSections] = useState({});
+  const [selectedPromise, setSelectedPromise] = useState(null);
 
   const services = [
     {
@@ -196,6 +198,14 @@ export default function Services() {
     window.location.hash = '#booking';
   };
 
+  const openModal = (promise) => {
+    setSelectedPromise(promise);
+  };
+
+  const closeModal = () => {
+    setSelectedPromise(null);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
@@ -319,14 +329,15 @@ export default function Services() {
               return (
                 <div 
                   key={index}
-                  className={`group h-80 perspective transition-all duration-700 ease-out ${
+                  onClick={() => openModal(promise)}
+                  className={`group h-80 perspective transition-all duration-700 ease-out cursor-pointer lg:cursor-default ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}
                   style={{
                     transitionDelay: `${index * 100}ms`
                   }}
                 >
-                  <div className="relative w-full h-full transition-all duration-700 group-hover:[transform:rotateY(180deg)]"
+                  <div className="relative w-full h-full transition-all duration-700 lg:group-hover:[transform:rotateY(180deg)]"
                        style={{ transformStyle: 'preserve-3d' }}>
                     
                     {/* Front of card */}
@@ -335,7 +346,7 @@ export default function Services() {
                            backfaceVisibility: 'hidden',
                            boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
                          }}>
-                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      <div className="absolute inset-0 rounded-2xl opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300"
                            style={{ boxShadow: '0 0 50px 10px rgba(19, 147, 196, 0.7)' }}></div>
                       <div className="text-center h-full flex flex-col justify-center relative z-10">
                         <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#1393c4] to-cyan-500 rounded-full flex items-center justify-center">
@@ -344,14 +355,11 @@ export default function Services() {
                         <h3 className="text-2xl font-bold mb-4 text-[#1393c4]">
                           {promise.title}
                         </h3>
-                        <p className="text-[#1393c4] text-sm opacity-60">
-                          Hover to learn more
-                        </p>
                       </div>
                     </div>
                     
-                    {/* Back of card */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#1393c4] to-cyan-500 rounded-2xl shadow-xl p-8 [transform:rotateY(180deg)]"
+                    {/* Back of card - only visible on desktop hover */}
+                    <div className="hidden lg:block absolute inset-0 bg-gradient-to-br from-[#1393c4] to-cyan-500 rounded-2xl shadow-xl p-8 [transform:rotateY(180deg)]"
                          style={{ backfaceVisibility: 'hidden' }}>
                       <div className="text-center h-full flex flex-col justify-center">
                         <Icon className="w-12 h-12 text-white mx-auto mb-4 opacity-80" />
@@ -370,6 +378,37 @@ export default function Services() {
           </div>
         </div>
       </div>
+
+      {/* Modal for mobile */}
+      {selectedPromise && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={closeModal}
+        >
+          <div 
+            className="bg-gradient-to-br from-[#1393c4] to-cyan-500 rounded-2xl p-8 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={closeModal}
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="text-center">
+              {React.createElement(selectedPromise.icon, { className: "w-16 h-16 text-white mx-auto mb-6 opacity-80" })}
+              <h3 className="text-3xl font-bold mb-6 text-white">
+                {selectedPromise.title}
+              </h3>
+              <p className="text-white text-lg leading-relaxed">
+                {selectedPromise.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Additional Services Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24">
