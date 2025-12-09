@@ -97,6 +97,8 @@ const BookingPage = () => {
   const serviceAreasRef = useRef(null);
   const whyChooseRef = useRef(null);
   const ctaRef = useRef(null);
+  const dateRef = useRef(null);
+  const timeRef = useRef(null);
 
   useEffect(() => {
     const handleScrollAnimations = () => {
@@ -151,6 +153,13 @@ const BookingPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Auto-scroll to time section after date is selected
+    if (name === 'pickupDate' && value && timeRef.current) {
+      setTimeout(() => {
+        timeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
   };
 
   const handleServiceSelect = (service) => {
@@ -185,9 +194,16 @@ const BookingPage = () => {
   };
 
   const handleNoMoreServices = () => {
-    // User doesn't want more services - keep modal closed
+    // User doesn't want more services - close modal and scroll to date
     setShowServiceModal(false);
     setIsModalOpen(false);
+    
+    // Auto-scroll to date section after closing modal
+    if (dateRef.current) {
+      setTimeout(() => {
+        dateRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
   };
 
   const removeService = (serviceId) => {
@@ -704,7 +720,7 @@ const BookingPage = () => {
 
                   {/* Pickup Schedule */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
+                    <div ref={dateRef}>
                       <label className="block text-sm font-semibold text-[#1393c4] mb-2">
                         Pickup Date <span className="text-red-500">*</span>
                       </label>
@@ -723,7 +739,7 @@ const BookingPage = () => {
                       </div>
                     </div>
 
-                    <div>
+                    <div ref={timeRef}>
                       <label className="block text-sm font-semibold text-[#1393c4] mb-2">
                         Preferred Time <span className="text-red-500">*</span>
                       </label>
