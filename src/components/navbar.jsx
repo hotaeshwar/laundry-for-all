@@ -15,6 +15,41 @@ export default function Navbar({
   const [activeLink, setActiveLink] = useState('Home');
   
   useEffect(() => {
+    // Function to set active link based on current hash
+    const setActiveLinkFromHash = () => {
+      const hash = window.location.hash;
+      switch(hash) {
+        case '#home':
+        case '':
+          setActiveLink('Home');
+          break;
+        case '#about':
+          setActiveLink('About');
+          break;
+        case '#services':
+          setActiveLink('Services');
+          break;
+        case '#pricing':
+          setActiveLink('Pricing');
+          break;
+        case '#contact':
+          setActiveLink('Contact');
+          break;
+        default:
+          setActiveLink('Home');
+      }
+    };
+
+    // Set active link on initial load
+    setActiveLinkFromHash();
+
+    // Also set active link when hash changes
+    const handleHashChange = () => {
+      setActiveLinkFromHash();
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const shouldBeScrolled = scrollY > 50;
@@ -46,9 +81,11 @@ export default function Navbar({
     
     return () => {
       window.removeEventListener('scroll', scrollListener);
+      window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
 
+  // Rest of your code remains exactly the same...
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
