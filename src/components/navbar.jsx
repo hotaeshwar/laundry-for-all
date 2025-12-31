@@ -1,0 +1,314 @@
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Calendar } from 'lucide-react';
+
+export default function Navbar({ 
+  onBookingClick, 
+  onServicesClick,
+  onHomeClick,
+  onAboutClick,
+  onServiceClick,
+  onContactClick,
+  onPricingClick
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState('Home');
+  
+  useEffect(() => {
+    const setActiveLinkFromHash = () => {
+      const hash = window.location.hash;
+      switch(hash) {
+        case '#home':
+        case '':
+          setActiveLink('Home');
+          break;
+        case '#about':
+          setActiveLink('About');
+          break;
+        case '#services':
+          setActiveLink('Services');
+          break;
+        case '#pricing':
+          setActiveLink('Pricing');
+          break;
+        case '#contact':
+          setActiveLink('Contact');
+          break;
+        default:
+          setActiveLink('Home');
+      }
+    };
+
+    setActiveLinkFromHash();
+
+    const handleHashChange = () => {
+      setActiveLinkFromHash();
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const shouldBeScrolled = scrollY > 50;
+      
+      setIsScrolled(prev => {
+        if (prev !== shouldBeScrolled) {
+          return shouldBeScrolled;
+        }
+        return prev;
+      });
+    };
+
+    handleScroll();
+    
+    let ticking = false;
+    const scrollListener = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', scrollListener, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', scrollListener);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleBookingClickInternal = (e) => {
+    e.preventDefault();
+    if (onBookingClick) {
+      onBookingClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleServicesClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('Services');
+    if (onServicesClick) {
+      onServicesClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleHomeClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('Home');
+    if (onHomeClick) {
+      onHomeClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleAboutClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('About');
+    if (onAboutClick) {
+      onAboutClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleServiceClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('Services');
+    if (onServiceClick) {
+      onServiceClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleContactClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('Contact');
+    if (onContactClick) {
+      onContactClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handlePricingClickInternal = (e) => {
+    e.preventDefault();
+    setActiveLink('Pricing');
+    if (onPricingClick) {
+      onPricingClick();
+    }
+    setIsMenuOpen(false);
+  };
+
+  const navLinks = [
+    { name: 'Home', href: '#home', handler: handleHomeClickInternal },
+    { name: 'About', href: '#about', handler: handleAboutClickInternal },
+    { name: 'Services', href: '#services', handler: handleServicesClickInternal },
+    { name: 'Pricing', href: '#pricing', handler: handlePricingClickInternal },
+    { name: 'Contact', href: '#contact', handler: handleContactClickInternal }
+  ];
+
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      isScrolled 
+        ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-[#1aa6b3]/10' 
+        : 'bg-gradient-to-b from-black/20 to-transparent'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20 lg:h-24">
+          
+          <div className="flex-shrink-0 relative group">
+            <div className="absolute inset-0 bg-[#1aa6b3] rounded-full opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500"></div>
+            <a 
+              href="#home" 
+              className="flex items-center h-full relative"
+              onClick={handleHomeClickInternal}
+            >
+              <img 
+                src="/images/LFA-03.png"
+                alt="LaundryForAll Logo" 
+                className="h-32 sm:h-40 md:h-48 lg:h-56 xl:h-64 w-auto transition-all duration-500 hover:scale-110 object-contain drop-shadow-lg"
+                style={{
+                  marginTop: '-0.5rem',
+                  marginBottom: '-0.5rem'
+                }}
+              />
+            </a>
+          </div>
+
+          <div className="hidden md:flex md:items-center md:space-x-1 lg:space-x-2 xl:space-x-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={link.handler}
+                className="relative px-3 lg:px-4 xl:px-5 py-2 text-sm lg:text-base xl:text-lg font-black transition-all duration-300 group"
+              >
+                <span className={`relative z-10 tracking-wide transition-all duration-300 ${
+                  isScrolled 
+                    ? 'text-gray-900 group-hover:text-[#1aa6b3]' 
+                    : 'text-white group-hover:text-[#1aa6b3]'
+                }`}>
+                  {link.name}
+                </span>
+                
+                <span 
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 bg-gradient-to-r from-[#1aa6b3] to-teal-400 rounded-full transition-all duration-500 ${
+                    activeLink === link.name 
+                      ? 'w-full shadow-lg shadow-[#1aa6b3]/50' 
+                      : 'w-0 group-hover:w-full'
+                  }`}
+                ></span>
+                
+                <span className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 ${
+                  isScrolled
+                    ? 'bg-gradient-to-br from-[#1aa6b3]/10 to-teal-400/10'
+                    : 'bg-white/10'
+                }`}></span>
+              </a>
+            ))}
+            
+            <div className="relative group ml-2">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#1aa6b3] to-teal-400 rounded-xl opacity-70 group-hover:opacity-100 blur transition-all duration-300"></div>
+              <a
+                href="#booking"
+                onClick={handleBookingClickInternal}
+                className="relative bg-gradient-to-r from-[#1aa6b3] to-teal-400 hover:from-[#147c86] hover:to-teal-500 text-white px-5 lg:px-6 xl:px-8 py-2.5 lg:py-3 text-sm lg:text-base font-black rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-2xl overflow-hidden"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></span>
+                <Calendar className="h-4 w-4 lg:h-5 lg:w-5 relative z-10 animate-pulse" />
+                <span className="whitespace-nowrap relative z-10 tracking-wider">BOOK NOW</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className={`relative p-2.5 rounded-xl transition-all duration-300 ${
+                isScrolled 
+                  ? 'text-gray-800 hover:bg-[#1aa6b3]/10 border border-[#1aa6b3]/20' 
+                  : 'text-white hover:bg-white/20 border border-white/20'
+              }`}
+              aria-label="Toggle menu"
+            >
+              <span className="absolute inset-0 bg-gradient-to-br from-[#1aa6b3]/5 to-teal-400/5 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300"></span>
+              {isMenuOpen ? <X className="h-6 w-6 relative z-10" /> : <Menu className="h-6 w-6 relative z-10" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className={`md:hidden shadow-2xl backdrop-blur-xl border-t transition-all duration-300 ${
+          isScrolled 
+            ? 'bg-white/95 border-[#1aa6b3]/10' 
+            : 'bg-[#1aa6b3]/95 border-white/10'
+        }`}>
+          <div className="px-4 pt-2 pb-4 space-y-2">
+            {navLinks.map((link, idx) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={link.handler}
+                style={{ animationDelay: `${idx * 50}ms` }}
+                className={`relative block px-4 py-3.5 text-base font-black rounded-xl transition-all duration-300 hover:translate-x-2 group overflow-hidden ${
+                  isScrolled
+                    ? 'text-gray-800'
+                    : 'text-white'
+                }`}
+              >
+                <span className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+                  activeLink === link.name
+                    ? isScrolled
+                      ? 'bg-gradient-to-r from-[#1aa6b3]/20 to-teal-400/20'
+                      : 'bg-white/20'
+                    : 'opacity-0 group-hover:opacity-100'
+                } ${
+                  isScrolled 
+                    ? 'group-hover:bg-gradient-to-r group-hover:from-[#1aa6b3]/10 group-hover:to-teal-400/10'
+                    : 'group-hover:bg-white/10'
+                }`}></span>
+                
+                <span className={`relative z-10 tracking-wide transition-colors duration-300 ${
+                  isScrolled ? 'group-hover:text-[#1aa6b3]' : ''
+                }`}>
+                  {link.name}
+                </span>
+                
+                {activeLink === link.name && (
+                  <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 rounded-r-full transition-all duration-300 ${
+                    isScrolled ? 'bg-gradient-to-b from-[#1aa6b3] to-teal-400' : 'bg-white'
+                  }`}></span>
+                )}
+              </a>
+            ))}
+            
+            <div className="relative group mt-3">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#1aa6b3] to-teal-400 rounded-xl opacity-70 group-hover:opacity-100 blur-sm transition-all duration-300"></div>
+              <a
+                href="#booking"
+                onClick={handleBookingClickInternal}
+                className={`relative flex items-center gap-2 px-4 py-3.5 text-base font-black rounded-xl transition-all duration-300 overflow-hidden ${
+                  isScrolled
+                    ? 'bg-gradient-to-r from-[#1aa6b3] to-teal-400 hover:from-[#147c86] hover:to-teal-500 text-white'
+                    : 'bg-white/90 hover:bg-white text-[#1aa6b3]'
+                }`}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></span>
+                <Calendar className="h-5 w-5 relative z-10 animate-pulse" />
+                <span className="relative z-10 tracking-wider">BOOK NOW</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
